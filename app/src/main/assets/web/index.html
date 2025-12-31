@@ -1,0 +1,612 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FoodVan POS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+                @media print {
+                    body {
+                        background: white;
+                    }
+                    button {
+                        display: none;
+                    }
+                }
+
+                /* Prevent elastic scrolling on iOS */
+                body {
+                    margin: 0;
+                    width: 100%;
+                    height: 100%;
+                    overflow: hidden;
+                    -webkit-user-select: none;
+                    user-select: none;
+                }
+
+                #root {
+                    height: 100%;
+                    overflow-y: auto;
+                    -webkit-overflow-scrolling: touch;
+                }
+                /* Custom scrollbar for clean UI */
+                ::-webkit-scrollbar {
+                    width: 4px;
+                }
+                ::-webkit-scrollbar-thumb {
+                    background: #cbd5e1;
+                    border-radius: 10px;
+                }
+    </style>
+    <script type="importmap">
+    {
+      "imports": {
+        "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+        "react/": "https://esm.sh/react@^19.2.3/",
+        "react": "https://esm.sh/react@^19.2.3",
+        "@google/genai": "https://esm.sh/@google/genai@^1.34.0"
+      }
+    }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans">
+<div id="screen-items" class="h-screen p-4 flex flex-col">
+        <h2 class="text-xl font-bold mb-4">Main Menu</h2>
+        <!-- Category Tabs -->
+        <div class="flex gap-2 mb-4 overflow-x-auto">
+            <button class="category-btn bg-black text-white px-4 py-2 rounded"
+                    data-cat="ALL">All</button>
+
+            <button class="category-btn bg-gray-200 px-4 py-2 rounded"
+                    data-cat="SE">Short Eats</button>
+
+            <button class="category-btn bg-gray-200 px-4 py-2 rounded"
+                    data-cat="BR">Breakfast</button>
+
+            <button class="category-btn bg-gray-200 px-4 py-2 rounded"
+                    data-cat="LN">Lunch</button>
+
+            <button class="category-btn bg-gray-200 px-4 py-2 rounded"
+                    data-cat="DR">Drinks</button>
+        </div>
+
+        <div id="itemsGridWrapper" class="flex-1 overflow-y-auto">
+            <div id="itemsGrid" class="grid grid-cols-2 gap-4 pb-24">
+            </div>
+        </div>
+
+        <div class="border-t pt-3 bg-slate-50">
+            <button id="btnPay"
+                    class="w-full bg-green-700 text-white py-4 rounded-xl text-lg">
+                Pay & Print
+            </button>
+
+            <div class="mt-3 flex justify-between items-center">
+                <span id="itemCount" class="font-semibold">Items: 0</span>
+                <button onclick="showReport()"
+                        class="bg-blue-600 text-white px-4 py-2 rounded">
+                    Daily Report
+                </button>
+                <button id="btnBackFromItems"
+                        class="bg-gray-700 text-white px-4 py-2 rounded">
+                    Clear Order
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="screen-orders" class="hidden p-4">
+        <h2 class="text-xl font-bold mb-4">Orders</h2>
+        <button id="btnBackFromOrders"
+                class="bg-gray-700 text-white px-4 py-2 rounded">
+            ⬅ Back
+        </button>
+    </div>
+    <div id="screen-cash" class="hidden h-screen flex flex-col p-4 bg-white">
+
+    <h2 class="text-xl font-bold mb-4 text-center">Cash Received</h2>
+
+    <div class="text-center text-2xl mb-2">
+        Total: Rs <span id="cTotal">0</span>
+    </div>
+
+    <div class="text-center text-3xl font-bold mb-4">
+        Rs <span id="cCash">0</span>
+    </div>
+        <!-- Quick Cash Buttons -->
+        <div class="grid grid-cols-3 gap-3 mb-4">
+            <button class="quick-cash bg-gray-200 py-3 rounded" data-amt="100">
+                +100
+            </button>
+            <button class="quick-cash bg-gray-200 py-3 rounded" data-amt="500">
+                +500
+            </button>
+            <button class="quick-cash bg-gray-200 py-3 rounded" data-amt="1000">
+                +1000
+            </button>
+        </div>
+
+    <!-- Keypad -->
+        <div class="grid grid-cols-3 gap-4 text-xl flex-1">
+
+            <!-- Row 1 -->
+            <button class="cash-btn">1</button>
+            <button class="cash-btn">2</button>
+            <button class="cash-btn">3</button>
+
+            <!-- Row 2 -->
+            <button class="cash-btn">4</button>
+            <button class="cash-btn">5</button>
+            <button class="cash-btn">6</button>
+
+            <!-- Row 3 -->
+            <button class="cash-btn">7</button>
+            <button class="cash-btn">8</button>
+            <button class="cash-btn">9</button>
+
+            <!-- Row 4 -->
+            <div></div>
+            <button class="cash-btn">0</button>
+            <div></div>
+
+            <!-- Row 5 -->
+            <button id="btnCashOk" class="bg-green-600 text-white font-bold">
+                OK
+            </button>
+
+            <button id="btnCashClear" class="bg-red-500 text-white">
+                CLR
+            </button>
+
+            <button id="btnCashBack" class="bg-gray-600 text-white">
+                BACK
+            </button>
+        </div>
+    </div>
+
+    <div id="screen-receipt" class="hidden h-screen flex items-center justify-center bg-white">
+        <div class="w-72 border p-4 text-sm font-mono">
+            <h2 class="text-center font-bold mb-2">FOOD VAN POS</h2>
+            <hr>
+
+            <div class="my-2">
+                <div>Order No : <span id="rOrder">0001</span></div>
+                <div>Date : <span id="rDate"></span></div>
+                <div>Time : <span id="rTime"></span></div>
+            </div>
+
+            <hr>
+
+            <div id="rItems" class="my-2"></div>
+
+            <hr>
+
+            <div class="mt-3 space-y-1 text-lg">
+                <div class="flex justify-between font-bold text-xl">
+                    <span>TOTAL</span>
+                    <span>Rs <span id="rTotal"></span></span>
+                </div>
+
+                <div class="flex justify-between">
+                    <span>CASH</span>
+                    <span>Rs <span id="rCash"></span></span>
+                </div>
+
+                <div class="flex justify-between font-bold text-2xl border-t pt-2">
+                    <span>BALANCE</span>
+                    <span>Rs <span id="rBalance"></span></span>
+                </div>
+            </div>
+
+
+            <hr class="my-2">
+
+            <button onclick="printReceipt()"
+                    class="w-full bg-black text-white py-2 mt-2">
+                PRINT
+            </button>
+
+            <button onclick="goHome()"
+                    class="w-full bg-gray-300 py-2 mt-2">
+                BACK
+            </button>
+        </div>
+    </div>
+<script>
+        // ===============================
+        // DAILY SALES DATA (IN-MEMORY)
+        // ===============================
+        let dailySales = [];
+        // each entry: { items: [...], total: number }
+
+
+        // =====================================================
+        // 1️⃣ DATA — WHAT THE POS KNOWS
+        // =====================================================
+
+        // Screen references
+
+        const items  = document.getElementById("screen-items");
+        const orders = document.getElementById("screen-orders");
+
+        // Business rules
+        const MAX_QTY_PER_ITEM = 5;
+        let currentCategory = "ALL";
+
+        // Order number
+        let orderNo = 1;
+        let cashReceived = 0;
+
+        // =====================================================
+        // MENU DATA (ALL ITEMS)
+        // =====================================================
+
+        const menu = [
+
+          // ---------- SHORT EATS (SE) ----------
+          { id: "SE01", name: "Jumbo Sausage Bun", price: 250, qty: 0 },
+          { id: "SE02", name: "Egg Bun", price: 200, qty: 0 },
+          { id: "SE03", name: "Roast Paan (Plain)", price: 100, qty: 0 },
+          { id: "SE04", name: "Roast Paan + Pol Sambol", price: 120, qty: 0 },
+          { id: "SE05", name: "Pol Roti + Lunumiris", price: 100, qty: 0 },
+          { id: "SE06", name: "Fish Chinese Roll", price: 120, qty: 0 },
+          { id: "SE07", name: "Egg Chinese Roll", price: 150, qty: 0 },
+          { id: "SE08", name: "Fish Cutlet", price: 100, qty: 0 },
+          { id: "SE09", name: "Chicken Mini Pizza", price: 250, qty: 0 },
+
+          // ---------- BREAKFAST (BR) ----------
+          { id: "BR01", name: "10 String Hoppers + Pol Sambol", price: 80, qty: 0 },
+          { id: "BR02", name: "Dosa + Minchi Sambol", price: 125, qty: 0 },
+          { id: "BR03", name: "Pittu + Lunumiris", price: 150, qty: 0 },
+          { id: "BR04", name: "Kiribath + Lunumiris", price: 100, qty: 0 },
+
+          // ---------- LUNCH (LN) ----------
+          { id: "LN01", name: "Rice & Curry (Veg)", price: 280, qty: 0 },
+          { id: "LN02", name: "Rice & Curry (Egg)", price: 320, qty: 0 },
+          { id: "LN03", name: "Rice & Curry (Fish)", price: 380, qty: 0 },
+          { id: "LN04", name: "Rice & Curry (Chicken)", price: 450, qty: 0 },
+          { id: "LN05", name: "Rice & Curry (Beef / Pork)", price: 750, qty: 0 },
+
+          // ---------- DRINKS (DR) ----------
+          { id: "DR01", name: "Plain Tea", price: 80, qty: 0 },
+          { id: "DR02", name: "Black Coffee", price: 100, qty: 0 },
+          { id: "DR03", name: "Sago Drink (330ml)", price: 150, qty: 0 },
+          { id: "DR04", name: "Fresh Juice (160ml)", price: 150, qty: 0 },
+          { id: "DR05", name: "Fresh Juice (300ml)", price: 250, qty: 0 }
+        ];
+
+        // UI elements
+        const itemsGrid = document.getElementById("itemsGrid");
+        const itemCount = document.getElementById("itemCount");
+
+
+
+        // =====================================================
+        // 2️⃣ FUNCTIONS — HOW THE SYSTEM WORKS
+        // =====================================================
+
+        function renderItems() {
+          itemsGrid.innerHTML = "";
+
+          menu
+          .filter(item =>
+            currentCategory === "ALL" ||
+            getCategory(item) === currentCategory
+          )
+          .forEach(item => {
+            const btn = document.createElement("button");
+
+            btn.className =
+              "bg-white border rounded-xl p-4 text-left shadow active:scale-95 transition";
+
+            btn.innerHTML = `
+              <div class="font-semibold">${item.name}</div>
+              <div class="text-sm text-gray-600">Rs ${item.price}</div>
+              <div class="mt-2 font-bold">Qty: ${item.qty}</div>
+            `;
+
+        let pressTimer;
+        let longPress = false;
+
+        btn.onpointerdown = () => {
+          longPress = false;
+          pressTimer = setTimeout(() => {
+            longPress = true;
+            if (item.qty > 0) {
+              item.qty--;
+              updateTotals();
+              renderItems();
+            }
+          }, 600);
+        };
+
+        btn.onpointerup = () => {
+          clearTimeout(pressTimer);
+        };
+
+        btn.onpointerleave = () => {
+          clearTimeout(pressTimer);
+        };
+
+        btn.onclick = (e) => {
+          if (longPress) {
+            e.preventDefault();
+            return; // ❌ block click after long press
+          }
+
+          if (item.qty >= MAX_QTY_PER_ITEM) {
+            alert("Maximum 5 per item");
+            return;
+          }
+
+          item.qty++;
+          updateTotals();
+          renderItems();
+        };
+
+            itemsGrid.appendChild(btn);
+          });
+        }
+
+        function getCategory(item) {
+          return item.id.substring(0, 2); // SE, BR, LN, DR
+        }
+
+        function getSelectedItems() {
+          return menu.filter(i => i.qty > 0);
+        }
+
+
+        function getTotal() {
+          return getSelectedItems()
+            .reduce((sum, i) => sum + i.price * i.qty, 0);
+        }
+
+
+        function updateTotals() {
+          const totalQty = getSelectedItems()
+            .reduce((sum, i) => sum + i.qty, 0);
+
+          itemCount.innerText = `Items: ${totalQty}`;
+        }
+
+
+        function showReceipt(orderItems, total, cash) {
+          items.classList.add("hidden");
+          orders.classList.add("hidden");
+          document.getElementById("screen-receipt").classList.remove("hidden");
+
+          document.getElementById("rOrder").innerText = orderNo++;
+          document.getElementById("rDate").innerText = new Date().toLocaleDateString();
+          document.getElementById("rTime").innerText = new Date().toLocaleTimeString();
+
+          const itemsDiv = document.getElementById("rItems");
+          itemsDiv.innerHTML = "";
+
+          orderItems.forEach(i => {
+            itemsDiv.innerHTML += `
+              <div class="flex justify-between text-sm">
+                <span>${i.name} x${i.qty}</span>
+                <span>Rs ${i.price * i.qty}</span>
+              </div>
+            `;
+          });
+
+          document.getElementById("rTotal").innerText = total;
+          document.getElementById("rCash").innerText = cash;
+          document.getElementById("rBalance").innerText = cash - total;
+        }
+
+
+        function resetOrder() {
+          menu.forEach(i => i.qty = 0);
+          updateTotals();
+        }
+
+        function goHome() {
+          document.getElementById("screen-receipt").classList.add("hidden");
+          items.classList.remove("hidden");
+          resetOrder();
+          renderItems();
+          updateTotals();
+        }
+
+        function showCashPad(total) {
+          document.getElementById("cTotal").innerText = total;
+          document.getElementById("cCash").innerText = "0";
+          cashReceived = 0;
+
+          items.classList.add("hidden");
+          document.getElementById("screen-cash").classList.remove("hidden");
+        }
+
+        function updateCashDisplay() {
+          document.getElementById("cCash").innerText = cashReceived;
+        }
+        function showReport() {
+          items.classList.add("hidden");
+          document.getElementById("screen-report").classList.remove("hidden");
+
+          document.getElementById("repBills").innerText = dailySales.length;
+
+          let totalSales = 0;
+          let summary = {};
+
+          dailySales.forEach(sale => {
+            totalSales += sale.total;
+
+            sale.items.forEach(i => {
+              if (!summary[i.name]) {
+                summary[i.name] = { qty: 0, value: 0 };
+              }
+              summary[i.name].qty += i.qty;
+              summary[i.name].value += i.qty * i.price;
+            });
+          });
+
+          document.getElementById("repTotal").innerText = totalSales;
+
+          const repDiv = document.getElementById("repItems");
+          repDiv.innerHTML = "";
+
+          Object.keys(summary).forEach(name => {
+            const s = summary[name];
+            repDiv.innerHTML += `
+              <div class="flex justify-between">
+                <span>${name} (${s.qty})</span>
+                <span>Rs ${s.value}</span>
+              </div>
+            `;
+          });
+        }
+
+        function closeReport() {
+          document.getElementById("screen-report").classList.add("hidden");
+          items.classList.remove("hidden");
+        }
+
+
+        // =====================================================
+        // 3️⃣ EVENTS — WHEN USERS ACT
+        // =====================================================
+
+        document.getElementById("btnBackFromItems").onclick = () => {
+          resetOrder();
+          renderItems();
+          updateTotals();
+        };
+
+        document.getElementById("btnPay").onclick = () => {
+          const selected = getSelectedItems();
+          if (selected.length === 0) {
+            alert("No items selected");
+            return;
+          }
+
+          const total = getTotal();
+          showCashPad(total);
+        };
+
+        document.querySelectorAll(".category-btn").forEach(btn => {
+          btn.onclick = () => {
+            currentCategory = btn.dataset.cat;
+
+            document.querySelectorAll(".category-btn")
+              .forEach(b => b.classList.remove("bg-black", "text-white"));
+
+            btn.classList.add("bg-black", "text-white");
+
+            renderItems();
+          };
+        });
+
+        document.querySelectorAll(".cash-btn").forEach(btn => {
+          btn.onclick = () => {
+            const digit = btn.innerText;
+            cashReceived = parseInt("" + cashReceived + digit);
+            updateCashDisplay();
+          };
+        });
+        document.querySelectorAll(".quick-cash").forEach(btn => {
+          btn.onclick = () => {
+            const amt = parseInt(btn.dataset.amt);
+            cashReceived += amt;
+            updateCashDisplay();
+          };
+        });
+        document.getElementById("btnCashBack").onclick = () => {
+            document.getElementById("screen-cash").classList.add("hidden");
+            items.classList.remove("hidden");
+        };
+
+        document.getElementById("btnCashClear").onclick = () => {
+          cashReceived = 0;
+          updateCashDisplay();
+        };
+
+        document.getElementById("btnCashOk").onclick = () => {
+          const total = getTotal();
+          if (cashReceived < total) {
+            alert("Cash is less than total");
+            return;
+          }
+
+
+          document.getElementById("screen-cash").classList.add("hidden");
+
+        const soldItems = getSelectedItems().map(i => ({
+          name: i.name,
+          qty: i.qty,
+          price: i.price
+        }));
+
+        // save sale
+        dailySales.push({
+          items: soldItems,
+          total: total
+        });
+
+        // show receipt
+        showReceipt(soldItems, total, cashReceived);
+
+        };
+
+        // App start: prepare Items screen
+        window.onload = () => {
+            renderItems();
+            updateTotals();
+        };
+
+        function printReceipt() {
+            let receipt = `
+        FOOD VAN POS
+        -------------------------
+        Order: ${document.getElementById("rOrder").innerText}
+        Date : ${document.getElementById("rDate").innerText}
+        Time : ${document.getElementById("rTime").innerText}
+
+        ${document.getElementById("rItems").innerText}
+
+        -------------------------
+        TOTAL  : Rs ${document.getElementById("rTotal").innerText}
+        CASH   : Rs ${document.getElementById("rCash").innerText}
+        BALANCE: Rs ${document.getElementById("rBalance").innerText}
+
+        Thank You and Come Again!
+            `.trim();
+
+            if (window.AndroidPrint) {
+                AndroidPrint.printText(receipt);
+            } else {
+                alert("Printer service not available");
+            }
+        }
+</script>
+<div id="screen-report" class="hidden h-screen p-4 bg-white overflow-y-auto">
+
+    <h2 class="text-xl font-bold mb-4 text-center">
+        📊 Daily Sales Summary
+    </h2>
+
+    <div class="mb-4 space-y-1 text-lg">
+        <div>Total Bills: <span id="repBills">0</span></div>
+        <div>Total Sales: Rs <span id="repTotal">0</span></div>
+    </div>
+
+    <hr class="my-3">
+
+    <div id="repItems" class="space-y-2 text-sm"></div>
+
+    <button onclick="closeReport()"
+            class="w-full bg-gray-700 text-white py-3 mt-6 rounded">
+        BACK
+    </button>
+</div>
+
+</body>
+</html>
