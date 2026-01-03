@@ -57,22 +57,51 @@
 <div id="screen-items" class="h-screen p-4 flex flex-col">
         <h2 class="text-xl font-bold mb-4">Main Menu</h2>
         <!-- Category Tabs -->
-        <div class="flex gap-2 mb-4 overflow-x-auto">
-            <button class="category-btn bg-black text-white px-4 py-2 rounded"
-                    data-cat="ALL">All</button>
+    <!-- Category Tabs -->
+    <div class="flex gap-2 mb-4 overflow-x-auto">
 
-            <button class="category-btn bg-gray-200 px-4 py-2 rounded"
-                    data-cat="SE">Short Eats</button>
+        <button class="category-btn bg-black text-white px-4 py-2 rounded"
+                data-cat="ALL">
+            All
+        </button>
 
-            <button class="category-btn bg-gray-200 px-4 py-2 rounded"
-                    data-cat="BR">Breakfast</button>
+        <button class="category-btn bg-gray-200 px-4 py-2 rounded"
+                data-cat="SE">
+            Short Eats
+        </button>
 
-            <button class="category-btn bg-gray-200 px-4 py-2 rounded"
-                    data-cat="LN">Lunch</button>
+        <button class="category-btn bg-gray-200 px-4 py-2 rounded"
+                data-cat="BR">
+            Breakfast
+        </button>
 
-            <button class="category-btn bg-gray-200 px-4 py-2 rounded"
-                    data-cat="DR">Drinks</button>
-        </div>
+        <button class="category-btn bg-gray-200 px-4 py-2 rounded"
+                data-cat="LN">
+            Lunch
+        </button>
+
+        <button class="category-btn bg-gray-200 px-4 py-2 rounded"
+                data-cat="SD">
+            Side Dishes
+        </button>
+
+        <button class="category-btn bg-gray-200 px-4 py-2 rounded"
+                data-cat="GV">
+            Gravy
+        </button>
+
+        <button class="category-btn bg-gray-200 px-4 py-2 rounded"
+                data-cat="TE">
+            Tea
+        </button>
+
+        <button class="category-btn bg-gray-200 px-4 py-2 rounded"
+                data-cat="DR">
+            Drinks
+        </button>
+
+    </div>
+
 
         <div id="itemsGridWrapper" class="flex-1 overflow-y-auto">
             <div id="itemsGrid" class="grid grid-cols-2 gap-4 pb-24">
@@ -246,39 +275,70 @@
         // MENU DATA (ALL ITEMS)
         // =====================================================
 
-        const menu = [
+    const menu = [
 
-          // ---------- SHORT EATS (SE) ----------
-          { id: "SE01", name: "Jumbo Sausage Bun", price: 250, qty: 0 },
-          { id: "SE02", name: "Egg Bun", price: 200, qty: 0 },
-          { id: "SE03", name: "Roast Paan (Plain)", price: 100, qty: 0 },
-          { id: "SE04", name: "Roast Paan + Pol Sambol", price: 120, qty: 0 },
-          { id: "SE05", name: "Pol Roti + Lunumiris", price: 100, qty: 0 },
-          { id: "SE06", name: "Fish Chinese Roll", price: 120, qty: 0 },
-          { id: "SE07", name: "Egg Chinese Roll", price: 150, qty: 0 },
-          { id: "SE08", name: "Fish Cutlet", price: 100, qty: 0 },
-          { id: "SE09", name: "Chicken Mini Pizza", price: 250, qty: 0 },
+      // =====================
+      // SHORT EATS (SE)
+      // =====================
+      { id: "SE01", name: "Jumbo Sausage Bun", price: 250, qty: 0 },
+      { id: "SE02", name: "Egg Bun", price: 200, qty: 0 },
+      { id: "SE03", name: "Roast Paan (Plain)", price: 100, qty: 0 },
+      { id: "SE04", name: "Roast Paan + Pol Sambol", price: 120, qty: 0 },
+      { id: "SE05", name: "Pol Roti + Lunumiris", price: 100, qty: 0 },
+      { id: "SE06", name: "Fish Chinese Roll", price: 120, qty: 0 },
+      { id: "SE07", name: "Egg Chinese Roll", price: 150, qty: 0 },
+      { id: "SE08", name: "Fish Cutlet", price: 100, qty: 0 },
+      { id: "SE09", name: "Chicken Mini Pizza", price: 250, qty: 0 },
 
-          // ---------- BREAKFAST (BR) ----------
-          { id: "BR01", name: "10 String Hoppers + Pol Sambol", price: 80, qty: 0 },
-          { id: "BR02", name: "Dosa + Minchi Sambol", price: 125, qty: 0 },
-          { id: "BR03", name: "Pittu + Lunumiris", price: 150, qty: 0 },
-          { id: "BR04", name: "Kiribath + Lunumiris", price: 100, qty: 0 },
+      // =====================
+      // BREAKFAST (BR)
+      // =====================
+      { id: "BR01", name: "10 String Hoppers + Pol Sambol", price: 120, qty: 0 },
+      { id: "BR02", name: "Dosa + Minchi Sambol", price: 125, qty: 0 },
+      { id: "BR03", name: "Pittu + Lunumiris", price: 150, qty: 0 },
+      { id: "BR04", name: "Kiribath + Lunumiris", price: 100, qty: 0 },
 
-          // ---------- LUNCH (LN) ----------
-          { id: "LN01", name: "Rice & Curry (Veg)", price: 280, qty: 0 },
-          { id: "LN02", name: "Rice & Curry (Egg)", price: 320, qty: 0 },
-          { id: "LN03", name: "Rice & Curry (Fish)", price: 380, qty: 0 },
-          { id: "LN04", name: "Rice & Curry (Chicken)", price: 450, qty: 0 },
-          { id: "LN05", name: "Rice & Curry (Beef / Pork)", price: 750, qty: 0 },
+      // =====================
+      // LUNCH (LN)
+      // =====================
+      { id: "LN01", name: "Rice & Curry (3 Vegetables)", price: 280, qty: 0 },
+      { id: "LN02", name: "Rice & Curry (Egg)", price: 320, qty: 0 },
+      { id: "LN03", name: "Rice & Curry (Fish)", price: 380, qty: 0 },
+      { id: "LN04", name: "Rice & Curry (Chicken)", price: 450, qty: 0 },
+      { id: "LN05", name: "Rice & Curry (Beef / Pork)", price: 750, qty: 0 },
 
-          // ---------- DRINKS (DR) ----------
-          { id: "DR01", name: "Plain Tea", price: 80, qty: 0 },
-          { id: "DR02", name: "Black Coffee", price: 100, qty: 0 },
-          { id: "DR03", name: "Sago Drink (330ml)", price: 150, qty: 0 },
-          { id: "DR04", name: "Fresh Juice (160ml)", price: 150, qty: 0 },
-          { id: "DR05", name: "Fresh Juice (300ml)", price: 250, qty: 0 }
-        ];
+      // =====================
+      // SIDE DISHES (SD)
+      // =====================
+      { id: "SD01", name: "Pol Sambol", price: 50, qty: 0 },
+      { id: "SD02", name: "Pol Mellum", price: 50, qty: 0 },
+      { id: "SD03", name: "Milky Jackfruit", price: 100, qty: 0 },
+      { id: "SD04", name: "Cassava (Milky)", price: 100, qty: 0 },
+      { id: "SD05", name: "Dhal Curry", price: 100, qty: 0 },
+      { id: "SD06", name: "Boiled Jackfruit", price: 150, qty: 0 },
+      { id: "SD07", name: "Boiled Cassava", price: 150, qty: 0 },
+
+      // =====================
+      // GRAVY (GV)
+      // =====================
+      { id: "GV01", name: "Meat Gravy", price: 70, qty: 0 },
+      { id: "GV02", name: "Fish Gravy", price: 70, qty: 0 },
+
+      // =====================
+      // TEA (TE)
+      // =====================
+      { id: "TE01", name: "Chai Tea (Porcelain Cup)", price: 150, qty: 0 },
+      { id: "TE02", name: "Chai Tea (Paper Cup)", price: 100, qty: 0 },
+      { id: "TE03", name: "Strong Tea (Porcelain Cup)", price: 150, qty: 0 },
+      { id: "TE04", name: "Plain Tea", price: 80, qty: 0 },
+
+      // =====================
+      // DRINKS (DR)
+      // =====================
+      { id: "DR01", name: "Fresh Juice (300ml)", price: 300, qty: 0 },
+      { id: "DR02", name: "Sago Drink (330ml)", price: 200, qty: 0 }
+
+    ];
 
         // UI elements
         const itemsGrid = document.getElementById("itemsGrid");
@@ -429,41 +489,36 @@
           document.getElementById("cCash").innerText = cashReceived;
         }
         function showReport() {
-          items.classList.add("hidden");
-          document.getElementById("screen-report").classList.remove("hidden");
+            if (!window.AndroidPOS) {
+                alert("Report service not available");
+                return;
+            }
 
-          document.getElementById("repBills").innerText = dailySales.length;
+            items.classList.add("hidden");
+            document.getElementById("screen-report").classList.remove("hidden");
 
-          let totalSales = 0;
-          let summary = {};
+            const data = JSON.parse(AndroidPOS.getDailyReport());
 
-          dailySales.forEach(sale => {
-            totalSales += sale.total;
+            document.getElementById("repBills").innerText = data.length;
 
-            sale.items.forEach(i => {
-              if (!summary[i.name]) {
-                summary[i.name] = { qty: 0, value: 0 };
-              }
-              summary[i.name].qty += i.qty;
-              summary[i.name].value += i.qty * i.price;
+            let totalSales = 0;
+            const repDiv = document.getElementById("repItems");
+            repDiv.innerHTML = "";
+
+            data.forEach(row => {
+                totalSales += row.value;
+
+                repDiv.innerHTML += `
+                  <div class="flex justify-between">
+                    <span>${row.name} (${row.qty})</span>
+                    <span>Rs ${row.value}</span>
+                  </div>
+                `;
             });
-          });
 
-          document.getElementById("repTotal").innerText = totalSales;
-
-          const repDiv = document.getElementById("repItems");
-          repDiv.innerHTML = "";
-
-          Object.keys(summary).forEach(name => {
-            const s = summary[name];
-            repDiv.innerHTML += `
-              <div class="flex justify-between">
-                <span>${name} (${s.qty})</span>
-                <span>Rs ${s.value}</span>
-              </div>
-            `;
-          });
+            document.getElementById("repTotal").innerText = totalSales;
         }
+
 
         function closeReport() {
           document.getElementById("screen-report").classList.add("hidden");
@@ -530,31 +585,36 @@
         };
 
         document.getElementById("btnCashOk").onclick = () => {
+
           const total = getTotal();
           if (cashReceived < total) {
             alert("Cash is less than total");
             return;
           }
 
-
           document.getElementById("screen-cash").classList.add("hidden");
 
-        const soldItems = getSelectedItems().map(i => ({
-          name: i.name,
-          qty: i.qty,
-          price: i.price
-        }));
+          const soldItems = getSelectedItems().map(i => ({
+            name: i.name,
+            qty: i.qty,
+            price: i.price
+          }));
 
-        // save sale
-        dailySales.push({
-          items: soldItems,
-          total: total
-        });
+          const payload = {
+            total: total,
+            cash: cashReceived,
+            items: soldItems
+          };
 
-        // show receipt
-        showReceipt(soldItems, total, cashReceived);
+          // ✅ SAVE TO SQLITE (Android)
+          if (window.AndroidPOS) {
+            AndroidPOS.saveBill(JSON.stringify(payload));
+          }
 
+          // ✅ SHOW RECEIPT
+          showReceipt(soldItems, total, cashReceived);
         };
+
 
         // App start: prepare Items screen
         window.onload = () => {

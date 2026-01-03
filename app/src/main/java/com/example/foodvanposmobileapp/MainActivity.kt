@@ -17,26 +17,35 @@ class MainActivity : AppCompatActivity() {
 
         val webView = findViewById<WebView>(R.id.webView)
 
+// 1. Settings
         webView.settings.apply {
             javaScriptEnabled = true
             allowFileAccess = true
             domStorageEnabled = true
         }
 
-        webView.addJavascriptInterface(PrintBridge(this), "AndroidPrint")
+// 2. ADD BRIDGES FIRST
+        webView.addJavascriptInterface(
+            POSBridge(this),
+            "AndroidPOS"
+        )
 
+        webView.addJavascriptInterface(
+            PrintBridge(this),
+            "AndroidPrint"
+        )
+
+// 3. Clients
         webView.webViewClient = WebViewClient()
         webView.webChromeClient = WebChromeClient()
 
+// 4. LOAD PAGE LAST
+        webView.clearCache(true)
+        webView.clearHistory()
         webView.loadUrl("file:///android_asset/web/index.html")
-//        webView.addJavascriptInterface(
-//            new POSBridge (this),
-//            "AndroidPOS"
-//        );
-
-
     }
 }
+
 
 class PrintBridge(private val context: Context) {
 
